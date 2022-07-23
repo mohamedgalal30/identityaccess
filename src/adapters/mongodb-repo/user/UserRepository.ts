@@ -3,7 +3,10 @@ import { Identity } from "../../../common";
 import { UserMap } from "./UserMap";
 import { UserModel } from "./user.model";
 
-export class UserRepository implements IUserRepository {
+import { BaseMongoRepo } from "../BaseMongoRepo";
+
+export class UserRepository extends BaseMongoRepo implements IUserRepository {
+
     async add(newUser: User): Promise<User> {
         const createdUser = await UserModel.create(UserMap.toPersistence(newUser));
         return UserMap.toDomainObject(createdUser);

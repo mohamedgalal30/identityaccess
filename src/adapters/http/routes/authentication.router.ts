@@ -25,6 +25,11 @@ export class AuthenticationRouter implements Router {
         },
         {
             method: "post",
+            path: "/logout",
+            handler: AuthenticationCtrl.logout,
+        },
+        {
+            method: "post",
             path: "/verify",
             handler: AuthenticationCtrl.verify,
             // middleware: [validationMiddleware<LoginUserDto>(LoginUserDto)],

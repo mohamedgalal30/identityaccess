@@ -4,6 +4,16 @@ import { IUserRepository } from "../../domain/model/user";
 import { IRoleRepository, Role } from "../../domain/model/role";
 import { ISessionRepository } from "../../domain/model/session";
 
+import { AuthenticationError, AuthorizationError } from "../../common/errors";
+
+
+interface VerifyResponse {
+    id: string;
+    name: string;
+    email: string;
+}
+
+
 interface IBuildDeps {
     userRepository: IUserRepository;
     roleRepository: IRoleRepository;
@@ -28,7 +38,7 @@ export function buildVerify({
     sessionRepository
 
 }: IBuildDeps) {
-    return async function verify(token: string, access?: ICanAccess): Promise<boolean> {
+    return async function verify(token: string, access?: ICanAccess): Promise<VerifyResponse> {
 
         // decode the token to verify
         let decodedData: DecodedData
@@ -37,29 +47,33 @@ export function buildVerify({
             //@ts-ignore
             decodedData = jwt.verify(token, secret);
         } catch {
-            return false;
+            throw new AuthenticationError("Auth token not valid.");
         }
 
 
         const existedUser = await userRepository.userOfId(new Identity(decodedData.userId));
         if (!existedUser) {
-            return false;
+            throw new AuthenticationError("User for this token not exist.");
         }
 
         const session = await sessionRepository.findSessionByToken(token);
 
         if (!session) {
-            return false;
+            throw new AuthenticationError("invalid session.");
         }
 
         if (access) {
             const role = await roleRepository.roleOfId(existedUser.roleId);
             if (!role || !roleHasAccess(role, access)) {
-                return false;
+                throw new AuthorizationError("Can not access this resource.");
             }
         }
 
-        return true;
+        return {
+            id: existedUser.id.toString(),
+            name: existedUser.name,
+            email: existedUser.email.toString()
+        };
 
     }
 

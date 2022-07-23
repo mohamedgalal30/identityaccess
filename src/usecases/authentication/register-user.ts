@@ -1,6 +1,13 @@
 import { User, IUserRepository } from "../../domain/model/user";
 import { CreateUserDto } from ".";
 
+interface RegisterResponse {
+    id: string;
+    name: string;
+    email: string;
+}
+
+
 
 interface IBuildDeps {
     userRepository: IUserRepository
@@ -9,10 +16,11 @@ interface IBuildDeps {
 export function buildRegisterUser({
     userRepository
 }: IBuildDeps) {
-    return async function registerUser(userDto: CreateUserDto): Promise<User> {
-
+    return async function registerUser(userDto: CreateUserDto): Promise<RegisterResponse> {
+        const id = await userRepository.nextIdentity()
+        console.log(">>>>>>>>>>>", id)
         const toBeCreatedUser = new User(
-            "1",
+            await userRepository.nextIdentity(),
             userDto.name,
             userDto.email,
             userDto.password
@@ -22,12 +30,14 @@ export function buildRegisterUser({
             throw new Error("user already exists.");
         }
 
-        // const createdUser = await userRepository.add(toBeCreatedUser);
-        // const accessToken = jwt.sign({ userId: (await createdUser).id.id }, process.env.JWT_SECRET, {
-        //     expiresIn: "1d"
-        // });
 
-        return userRepository.add(toBeCreatedUser);
+        const createdUser = await userRepository.add(toBeCreatedUser);
+
+        return {
+            id: createdUser.id.toString(),
+            name: createdUser.name,
+            email: createdUser.email.toString()
+        };
 
     }
 }

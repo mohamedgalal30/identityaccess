@@ -2,8 +2,9 @@ import { IRoleRepository, Role } from "../../../domain/model/role";
 import { Identity } from "../../../common";
 import { RoleMap } from "./RoleMap";
 import { RoleModel } from "./role.model";
+import { BaseMongoRepo } from "../BaseMongoRepo";
 
-export class RoleRepository implements IRoleRepository {
+export class RoleRepository extends BaseMongoRepo implements IRoleRepository {
     async add(newRole: Role): Promise<Role> {
         const createdRole = await RoleModel.create(RoleMap.toPersistence(newRole));
         return RoleMap.toDomainObject(createdRole);

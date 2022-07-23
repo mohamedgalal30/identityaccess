@@ -1,5 +1,9 @@
 import { Role } from "../../../domain/model/role"
 import { Role as RoleInterface } from "./role.interface";
+import { Types } from "mongoose";
+
+
+
 export interface RolePresistenceSchema {
     id: string;
     email: string;
@@ -10,13 +14,18 @@ export interface RolePresistenceSchema {
 export class RoleMap {
     static toPersistence(role: Role): RoleInterface {
         return {
-            permissions: role.permissions.getPermissions(),
+            _id: new Types.ObjectId(role.id.toString()),
             name: role.getName(),
+            permissions: role.permissions.getPermissions(),
         }
     }
 
     static toDomainObject(raw: RoleInterface): Role {
 
-        return new Role(raw._id ? raw._id.toString() : "1", raw.name, raw.permissions);
+        return new Role(
+            raw._id.toString(),
+            raw.name,
+            raw.permissions
+        );
     }
 }

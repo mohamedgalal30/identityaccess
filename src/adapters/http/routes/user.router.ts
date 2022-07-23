@@ -16,7 +16,7 @@ export class UserRouter implements Router {
             path: "/users/:userId/assign-role",
             handler: UserCtrl.assignRole,
             middleware: [authMiddleware],
-            permission: "assignRole"
+            // permission: "assignRole"
         },
     ]
 }

@@ -1,7 +1,7 @@
 import { plainToClass } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
 import { RequestHandler } from 'express';
-import HttpException from '../server/exceptions/HttpException';
+import { HttpError } from '../../../common/errors/HttpError';
 
 export function validationMiddleware<T>(type: any, skipMissingProperties = false): RequestHandler {
   return (req, res, next) => {
@@ -9,7 +9,7 @@ export function validationMiddleware<T>(type: any, skipMissingProperties = false
       .then((errors: ValidationError[]) => {
         if (errors.length > 0) {
           const message = errors.map((error: ValidationError) => Object.values(error.constraints || {})).join(', ');
-          next(new HttpException(400, message));
+          next(new HttpError(400, message));
         } else {
           next();
         }

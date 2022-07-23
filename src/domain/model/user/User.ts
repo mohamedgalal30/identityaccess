@@ -12,7 +12,7 @@ export class User extends Entity {
 
     constructor(
         anId: string,
-        private name: string,
+        public name: string,
         anEmail: string,
         aPassword: string,
         aRoleId?: string,

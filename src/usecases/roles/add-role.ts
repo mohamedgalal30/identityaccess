@@ -19,8 +19,11 @@ export function buildAddRole({
         if (!(await roleRepository.isUniqueRoleName(roleDto.name))) {
             throw new Error("there is a role with the same name.");
         }
-
-        const toBeCreatedRole = new Role("1", roleDto.name, roleDto.permissions);
+        const toBeCreatedRole = new Role(
+            await roleRepository.nextIdentity(),
+            roleDto.name,
+            roleDto.permissions
+        );
         return roleRepository.add(toBeCreatedRole);
 
     };

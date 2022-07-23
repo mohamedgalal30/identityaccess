@@ -63,8 +63,11 @@ function makeHttpCb(action) {
                 return res.status(httpResponse.statusCode).send(httpResponse.body);
             })
             .catch(err => {
+                const status = err.status || 500;
+                const message = err.message || 'Something went wrong';
+
                 console.log(err)
-                return res.status(500).send({ error: err.message });
+                return res.status(status).send({ error: message });
 
             });
     }

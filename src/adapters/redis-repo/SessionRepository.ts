@@ -44,6 +44,14 @@ export class SessionRepository implements ISessionRepository {
         }
     }
 
+    async removeSessionByToken(token: string): Promise<boolean> {
+        const session = await this.gerRepo().search().where('token').equals(token).return.first();
+        if (session) {
+            await this.gerRepo().remove(session.entityId);
+        }
+        return true;
+    }
+
     async invalidateSession(sessionId: string): Promise<boolean> {
         await this.gerRepo().remove(sessionId);
         return true;

@@ -24,6 +24,17 @@ export class AuthenticationController {
 
     }
 
+    logout = async ({ headers }: IHttpRequest) => {
+
+        if (!headers || !headers.Authorization) {
+            throw Error("auth token does not exist.");
+        }
+        const logoutStatus = await this.authenticationService.logout(headers.Authorization);
+
+        return { statusCode: 200, body: { success: logoutStatus } };
+
+    }
+
     verify = async ({ body, headers }: IHttpRequest) => {
 
         if (!headers || !headers.Authorization) {
@@ -32,10 +43,10 @@ export class AuthenticationController {
 
         const token = headers.Authorization;
 
-        const verificationStatus = await this.authenticationService.verify(token, body?.access);
+        const user = await this.authenticationService.verify(token, body?.access);
         return {
-            statusCode: verificationStatus ? 200 : 401,
-            body: { success: verificationStatus }
+            statusCode: 200,
+            body: { data: user }
         };
 
     }
