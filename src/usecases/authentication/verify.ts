@@ -2,10 +2,12 @@ import jwt from 'jsonwebtoken';
 import { Identity } from "../../common";
 import { IUserRepository } from "../../domain/model/user";
 import { IRoleRepository, Role } from "../../domain/model/role";
+import { ISessionRepository } from "../../domain/model/session";
 
 interface IBuildDeps {
     userRepository: IUserRepository;
     roleRepository: IRoleRepository;
+    sessionRepository: ISessionRepository;
 
 }
 
@@ -22,7 +24,9 @@ interface ICanAccess {
 
 export function buildVerify({
     userRepository,
-    roleRepository
+    roleRepository,
+    sessionRepository
+
 }: IBuildDeps) {
     return async function verify(token: string, access?: ICanAccess): Promise<boolean> {
 
@@ -36,18 +40,22 @@ export function buildVerify({
             return false;
         }
 
-        // Check if token has expired
-        if (decodedData.exp < Date.now().valueOf() / 1000) {
+
+        const existedUser = await userRepository.userOfId(new Identity(decodedData.userId));
+        if (!existedUser) {
+            console.log("11111111111")
             return false;
         }
 
+        const session = await sessionRepository.findSessionByToken(token);
 
-        const existedUser = await userRepository.userOfId(new Identity(decodedData.userId));
-        if (!existedUser || !existedUser.userHasToken(token)) {
+        if (!session) {
+            console.log("22222222222222")
             return false;
         }
 
         if (access) {
+            console.log("333333333333")
             const role = await roleRepository.roleOfId(existedUser.roleId);
             if (!role || !roleHasAccess(role, access)) {
                 return false;
@@ -59,8 +67,7 @@ export function buildVerify({
     }
 
     function roleHasAccess(role: Role, access: ICanAccess): boolean {
-        const r = role.permissions.getPermissions()?.[access.service]?.[access.resource]?.includes(access.permission);
-        return r
+        return role.permissions.getPermissions()?.[access.service]?.[access.resource]?.includes(access.permission);
     }
 
 }

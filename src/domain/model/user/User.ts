@@ -15,7 +15,6 @@ export class User extends Entity {
         private name: string,
         anEmail: string,
         aPassword: string,
-        public accessTokens?: string[],
         aRoleId?: string,
     ) {
         super();
@@ -36,10 +35,6 @@ export class User extends Entity {
 
     getName(): string {
         return this.name;
-    }
-
-    userHasToken(token: string): boolean {
-        return Boolean(this.accessTokens?.includes(token));
     }
 
     assignRole(role: Role): User {

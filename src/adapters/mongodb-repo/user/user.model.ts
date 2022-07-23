@@ -16,9 +16,6 @@ const userSchema = new Schema(
     roleId: {
       type: Types.ObjectId,
     },
-    accessTokens: [{
-      type: String
-    }]
   },
   {
     toJSON: {

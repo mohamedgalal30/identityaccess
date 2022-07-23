@@ -29,14 +29,6 @@ export class UserRepository implements IUserRepository {
     }
 
 
-    async addAccessTokenToUser(id: Identity, accessToken: string): Promise<boolean> {
-        const result = await UserModel.updateOne(
-            { _id: id.toString() },
-            { $addToSet: { accessTokens: accessToken } }
-        );
-
-        return Boolean(result.acknowledged);
-    }
 
     async assignRoleToUser(userId: Identity, roleId: Identity): Promise<boolean> {
         const result = await UserModel.updateOne(

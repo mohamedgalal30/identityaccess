@@ -1,8 +1,10 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from "bcrypt";
 import { Email } from "../../domain/model/user";
-import { IUserRepository } from "../../domain/model/user/IUserRepository";
+import { IUserRepository } from "../../domain/model/user";
+import { ISessionRepository, Session } from "../../domain/model/session";
 import { LoginUserDto } from ".";
+
 
 interface LoginResponse {
     user: {
@@ -14,12 +16,14 @@ interface LoginResponse {
 
 
 interface IBuildDeps {
-    userRepository: IUserRepository
+    userRepository: IUserRepository,
+    sessionRepository: ISessionRepository
 
 }
 
 export function buildLogin({
-    userRepository
+    userRepository,
+    sessionRepository
 }: IBuildDeps) {
     return async function registerUser(loginUserDto: LoginUserDto): Promise<LoginResponse> {
 
@@ -33,11 +37,10 @@ export function buildLogin({
             throw new Error('Password is not correct');
         }
         const secret = process.env.JWT_SECRET as string;
-        const accessToken = jwt.sign({ userId: existedUser.id.toString() }, secret, {
-            expiresIn: "1d"
-        });
+        const accessToken = jwt.sign({ userId: existedUser.id.toString() }, secret, {});
 
-        await userRepository.addAccessTokenToUser(existedUser.id, accessToken);
+        const session = new Session(accessToken);
+        sessionRepository.saveSession(session);
 
         return {
             user: { id: existedUser.id.toString(), email: existedUser.email.toString() },

@@ -24,7 +24,6 @@ export class UserMap {
             raw.name,
             raw.email,
             raw.password,
-            raw.accessTokens,
             raw.roleId
         );
     }
