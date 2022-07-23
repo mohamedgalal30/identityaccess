@@ -19,7 +19,7 @@ export function buildRegisterUser({
         );
         const userExists = await userRepository.findByEmail(toBeCreatedUser.email);
         if (userExists) {
-            throw Error("user already exists.")
+            throw new Error("user already exists.");
         }
 
         // const createdUser = await userRepository.add(toBeCreatedUser);
