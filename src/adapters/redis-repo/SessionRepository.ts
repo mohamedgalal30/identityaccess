@@ -26,7 +26,7 @@ export class SessionRepository implements ISessionRepository {
         return this.sessionRepository;
     }
 
-    async saveSession(session: Session) {
+    async saveSession(session: Session): Promise<Session> {
         const createdSession = await this.gerRepo().createAndSave({
             token: session.token
         });
@@ -36,11 +36,16 @@ export class SessionRepository implements ISessionRepository {
 
     }
 
-    async findSessionByToken(token: string) {
+    async findSessionByToken(token: string): Promise<Session | undefined> {
         const session = await this.gerRepo().search().where('token').equals(token).return.first();
         if (session) {
             this.gerRepo().expire(session.entityId, expireInSeconds);
             return new Session(session.token, session.entityId);
         }
+    }
+
+    async invalidateSession(sessionId: string): Promise<boolean> {
+        await this.gerRepo().remove(sessionId);
+        return true;
     }
 }

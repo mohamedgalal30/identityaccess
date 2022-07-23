@@ -43,19 +43,16 @@ export function buildVerify({
 
         const existedUser = await userRepository.userOfId(new Identity(decodedData.userId));
         if (!existedUser) {
-            console.log("11111111111")
             return false;
         }
 
         const session = await sessionRepository.findSessionByToken(token);
 
         if (!session) {
-            console.log("22222222222222")
             return false;
         }
 
         if (access) {
-            console.log("333333333333")
             const role = await roleRepository.roleOfId(existedUser.roleId);
             if (!role || !roleHasAccess(role, access)) {
                 return false;
