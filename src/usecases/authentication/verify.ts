@@ -8,9 +8,12 @@ import { AuthenticationError, AuthorizationError } from "../../common/errors";
 
 
 interface VerifyResponse {
-    id: string;
-    name: string;
-    email: string;
+    user: {
+        id: string;
+        name: string;
+        email: string;
+    },
+    canAccess: boolean;
 }
 
 
@@ -70,9 +73,12 @@ export function buildVerify({
         }
 
         return {
-            id: existedUser.id.toString(),
-            name: existedUser.name,
-            email: existedUser.email.toString()
+            user: {
+                id: existedUser.id.toString(),
+                name: existedUser.name,
+                email: existedUser.email.toString()
+            },
+            canAccess: true
         };
 
     }

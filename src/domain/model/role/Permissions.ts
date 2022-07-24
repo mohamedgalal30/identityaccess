@@ -1,8 +1,10 @@
 
 export interface IPermissions {
+	//iam for identity and access management.
 	iam?: {
 		users?: string[];
 		roles?: string[];
+		sessions?: string[];
 	};
 }
 
@@ -12,6 +14,7 @@ export class Permissions {
 		iam: {
 			users: ["assignRole"],
 			roles: ["create", "edit", "delete"],
+			sessions: ["invalidate"]
 		},
 	}
 

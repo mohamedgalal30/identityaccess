@@ -1,7 +1,7 @@
 import { RoleController } from "../controllers";
 import { IRoutes, Router } from "../../../interfaces";
 import { RoleService, CreateRoleDto } from "../../../usecases/roles"
-import { validationMiddleware } from "../middleware/validation.middleware";
+import { validationMiddleware, authMiddleware } from "../middleware";
 
 const RoleCtrl = new RoleController(new RoleService());
 
@@ -15,7 +15,8 @@ export class RoleRouter implements Router {
             method: "post",
             path: "/roles",
             handler: RoleCtrl.addRole,
-            middleware: [validationMiddleware<CreateRoleDto>(CreateRoleDto)],
+            middleware: [authMiddleware, validationMiddleware<CreateRoleDto>(CreateRoleDto)],
+            permission: "create"
         },
     ]
 }

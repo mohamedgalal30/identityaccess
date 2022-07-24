@@ -9,16 +9,12 @@ export async function authMiddleware(request: RequestWithAccessPermission, respo
   }
 
   try {
-    const isValid = await (new AuthenticationService).verify(token, request.accessPermission);
+    const userAccess = await (new AuthenticationService).verify(token, request.accessPermission);
 
-    if (!isValid) {
-      next(new Error("worng auth token"));
-    }
-
-    // request["user"] = user;
+    request["user"] = userAccess.user;
     next();
 
-  } catch (error) {
-    next(new Error("worng auth token"));
+  } catch (error: any) {
+    return response.status(401).send({ error: error.message || "worng auth token" });
   }
 }
