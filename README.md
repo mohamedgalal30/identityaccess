@@ -249,14 +249,6 @@ To containerize our services and infrasturcture.
 
 ### Jest.js For unit testing.
 
-# TODO if having more time
-- complete the missing apis like edit, remove, list role.
-- validate the permissions scheme for the add role api.
-- implement event driven archticture and update role in eventual consistancy mode.
-    - denormalize the role and permissions in the user entity for rapid retrieval.
-    - save all the required data for authentication and authorization in the session in redis.
-    - when edit roles or users update the data in redis-stack based on event derien architecture.
-- write the missing unit test (due to the time I implemented the unit test of only register user as a proof of concept.)
 
 # Roles scheme
 - I assume that the system has multiple services, each has multiple resources, each single resource has multiple permissions.
@@ -275,4 +267,14 @@ For example the identity and access managment service will be like:
     }
 }
 ```
+
+# TODO if having more time
+- complete the missing apis like edit, remove, list role.
+- validate the permissions scheme for the add role api.
+- implement event driven archticture and update role in eventual consistancy mode.
+    - denormalize the role and permissions in the user entity for rapid retrieval.
+    - save all the required data for authentication and authorization in the session in redis.
+    - when edit roles or users update the data in redis-stack based on event derien architecture.
+- write the missing unit test (due to the time I implemented the unit test of only register user as a proof of concept.)
+
 
